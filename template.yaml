@@ -43,7 +43,7 @@ Resources:
             Topic:
               Ref: mySNSTopic
   mySNSTopic:
-    Type: 'AWS::SNS::Topic'
+    Type: AWS::SNS::Topic
   myDynamoDBTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
