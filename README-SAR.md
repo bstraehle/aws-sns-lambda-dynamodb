@@ -2,7 +2,7 @@
 
 Start up:  
 
-- Deploy application  
+- Deploy application, specifying table name  
 
 Test:  
 
