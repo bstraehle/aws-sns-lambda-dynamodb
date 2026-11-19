@@ -1,15 +1,23 @@
-# Serverless nanoservice using SNS, Lambda, and DynamoDB  
+# Serverless nanoservice using SNS, Lambda, and DynamoDB
 
-Start up:  
+![Architecture](https://raw.githubusercontent.com/bstraehle/aws-sns-lambda-dynamodb/master/architecture.png)
 
-- Deploy application, specifying table name  
+Start up:
 
-Test:  
+- Deploy application, specifying table name
 
-- Go to SNS, topics, topic, and publish message  
-- Go to DynamoDB, tables, table, and explore table items  
+Test:
 
-Tear down:  
+- Go to SNS, topics, topic (see `TopicArn` stack output), and publish message
+- Go to DynamoDB, tables, table, and explore table items
 
-- Go to CloudFormation and delete application stack  
-- Go to CloudWatch, log groups, log group and delete  
+Or with the AWS CLI:
+
+```
+aws sns publish --topic-arn <topic-arn> --message test
+aws dynamodb scan --table-name <table>
+```
+
+Tear down:
+
+- Go to CloudFormation and delete application stack (this also deletes the CloudWatch log group)

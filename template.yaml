@@ -4,25 +4,32 @@ Description: Serverless nanoservice using SNS, Lambda, and DynamoDB
 Parameters:
   TableName:
     Type: String
+    Description: Name of the DynamoDB table to create
+  LogRetentionInDays:
+    Type: Number
+    Default: 14
+    AllowedValues: [1, 3, 5, 7, 14, 30, 60, 90, 180, 365]
+    Description: Number of days to retain Lambda function logs
 Globals:
   Function:
-    Runtime: nodejs14.x
+    Runtime: nodejs24.x
+    Architectures:
+      - arm64
     MemorySize: 128
     Environment:
       Variables:
-        TABLE_NAME:
-          Ref: TableName
+        TABLE_NAME: !Ref TableName
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: nanoservice-sns-lambda-dynamodb
     Description: Serverless nanoservice using SNS, Lambda, and DynamoDB. The Node.js Lambda service is triggered by SNS and writes messages to DynamoDB.
     Author: Bernd Straehle
     Labels: ['serverless', 'sam', 'sns', 'lambda', 'dynamodb', 'nodejs']
-    SpdxLicenseId: GPL-3.0-or-later
+    SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE
     ReadmeUrl: README-SAR.md
     HomePageUrl: https://github.com/bstraehle
-    SemanticVersion: 1.0.0
+    SemanticVersion: 2.0.0
     SourceCodeUrl: https://github.com/bstraehle/aws-sns-lambda-dynamodb
 Resources:
   myLambdaFunction:
@@ -32,20 +39,33 @@ Resources:
       CodeUri: .
       Description: Serverless nanoservice using SNS, Lambda, and DynamoDB
       Timeout: 10
+      LoggingConfig:
+        LogGroup: !Ref myLogGroup
       Policies:
-      - DynamoDBCrudPolicy:
-          TableName:
-            Ref: TableName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
       Events:
         SNSEvent:
           Type: SNS
           Properties:
-            Topic:
-              Ref: mySNSTopic
+            Topic: !Ref mySNSTopic
   mySNSTopic:
     Type: AWS::SNS::Topic
+  myLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: !Ref LogRetentionInDays
   myDynamoDBTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
-      TableName:
-        Ref: TableName
+      TableName: !Ref TableName
+Outputs:
+  TopicArn:
+    Description: SNS topic that triggers the function
+    Value: !Ref mySNSTopic
+  FunctionName:
+    Description: Lambda function name
+    Value: !Ref myLambdaFunction
+  TableName:
+    Description: DynamoDB table name
+    Value: !Ref myDynamoDBTable
