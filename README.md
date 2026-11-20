@@ -6,17 +6,6 @@ Available in the [AWS Serverless Application Repository](https://serverlessrepo.
 
 ![Architecture](architecture.png)
 
-```mermaid
-flowchart LR
-    pub([Publisher]) -- Publish --> sns[SNS topic]
-    subgraph stack [AWS SAM application]
-        sns -- subscription --> fn[Lambda function<br/>nodejs24.x arm64]
-        fn -- PutItem --> ddb[(DynamoDB table)]
-        role[IAM execution role] -. assumes .-> fn
-        fn -. logs .-> logs[CloudWatch Logs]
-    end
-```
-
 ## Prerequisites
 
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
